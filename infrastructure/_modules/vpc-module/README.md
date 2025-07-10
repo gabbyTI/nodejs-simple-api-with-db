@@ -7,7 +7,6 @@ Here’s a clean and professional `README.md` for your reusable VPC Terraform mo
 This module provisions a production-ready **AWS Virtual Private Cloud (VPC)** with:
 
 - Dynamically generated **public and private subnets** in all available AZs of the region
-- **NAT Gateway** for private subnet internet access
 - **Internet Gateway** for public subnet access
 - Route tables and subnet associations
 - Tagging support
@@ -17,7 +16,6 @@ This module provisions a production-ready **AWS Virtual Private Cloud (VPC)** wi
 ## 📁 Features
 
 - ✅ Highly available (1 subnet per AZ)
-- ✅ NAT Gateway in the first public subnet
 - ✅ Automatically determines available AZs
 - ✅ Clean resource naming via `name_prefix`
 - ✅ Outputs for integrating with other modules

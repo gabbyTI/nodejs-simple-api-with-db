@@ -28,3 +28,8 @@ coverage/
 
 # Docker
 *.pid
+
+# Terraform
+*.tfstate
+*.tfstate.backup
+.terraform/
