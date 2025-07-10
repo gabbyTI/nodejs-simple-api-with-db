@@ -21,6 +21,7 @@ Thumbs.db
 
 # Prisma generated files
 prisma/dev.db
+*.sqlite*
 
 # Test output/coverage
 coverage/
