@@ -4,6 +4,9 @@ on:
     branches: [ main ]
     paths-ignore:
       - 'infrastructure/**'
+      - 'docs/**'
+      - '*.md'
+      - '.gitignore'
 
   pull_request:
     branches: [ main ]
