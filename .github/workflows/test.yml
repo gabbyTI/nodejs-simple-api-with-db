@@ -32,9 +32,3 @@ jobs:
       run: |
         echo "🧪 Running tests on Node.js ${{ matrix.node-version }}"
         npm test
-    # - name: Deploy if tests pass
-    #   if: success()
-    #   run: |
-    #     echo "Deploying application..."
-    #     # Add your deployment commands here, e.g., npm run deploy
-    #     echo "Deployment complete."
