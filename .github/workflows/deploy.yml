@@ -53,6 +53,12 @@ jobs:
           
           git pull origin main
           npm ci --production
+
+          export PORT=3000
+          export NODE_ENV=production
+          export LOG_LEVEL=info
+          export DATABASE_URL=${{ secrets.APP_DATABASE_URL }}
+
           pm2 restart nodejs-api || pm2 start npm --name "nodejs-simpleapi" -- start
           pm2 save
           
