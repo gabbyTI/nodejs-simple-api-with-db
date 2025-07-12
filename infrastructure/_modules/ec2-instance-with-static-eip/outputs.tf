@@ -8,6 +8,9 @@ output "ssh_public_key" {
   sensitive = true
 }
 
-output "eip" {
+output "public_ip" {
   value = aws_eip.eip.public_ip
+}
+output "instance_id" {
+  value = aws_instance.ec2_instance.id
 }

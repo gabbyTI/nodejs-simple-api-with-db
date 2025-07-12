@@ -3,7 +3,7 @@ resource "tls_private_key" "ssh_key" {
 }
 
 resource "aws_key_pair" "key_pair" {
-  key_name_prefix = "${var.instance_name}-${var.environment}-key-"
+  key_name_prefix = "${var.name_prefix}-key-pair-"
   public_key = tls_private_key.ssh_key.public_key_openssh
 }
 
@@ -40,9 +40,10 @@ resource "aws_instance" "ec2_instance" {
   instance_type = var.instance_type
   key_name      = aws_key_pair.key_pair.key_name
   vpc_security_group_ids = var.security_group_ids
+  subnet_id     = var.subnet_id
 
   tags = {
-    Name = "${var.instance_name}-${var.environment}-instance"
+    Name = "${var.name_prefix}-instance"
   }
 }
 

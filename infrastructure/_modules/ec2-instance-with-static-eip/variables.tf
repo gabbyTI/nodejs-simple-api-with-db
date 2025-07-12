@@ -1,7 +1,12 @@
 # Add your variable declarations here
 
-variable "instance_name" {
+variable "name_prefix" {
   description = "The name to assign to the EC2 instance"
+  type        = string
+}
+
+variable "subnet_id" {
+  description = "The ID of the subnet in which to launch the EC2 instance"
   type        = string
 }
 
