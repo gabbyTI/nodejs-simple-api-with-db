@@ -101,7 +101,7 @@ output "deployment_instructions" {
     
     === Application Server ===
     
-    EC2 Instance: ${module.vm.instance_id}
+    EC2 Instance: ${module.app_server.instance_id}
     Public IP: ${module.app_server.public_ip}
     Security Group: ${aws_security_group.app.id}
     

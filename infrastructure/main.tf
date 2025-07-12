@@ -36,4 +36,18 @@ module "app_server" {
   ami                = "ami-0ae6f07ad3a8ef182" # Replace with your AMI ID
   instance_type      = "t4g.micro"
   environment        = var.environment
+  user_data = base64encode(<<-EOF
+    #!/bin/bash
+    echo "Setting up Node.js environment"
+    # Update package manager and install prerequisites
+    apt update && apt install -y curl
+    # Install Node.js
+    curl -sL https://deb.nodesource.com/setup_23.x | bash -
+    apt install -y nodejs
+    # Install PM2 globally
+    npm install -g pm2
+    # Setup PM2 to start on boot
+    pm2 startup systemd -u ubuntu --hp /home/ubuntu
+    EOF
+  )
 }
