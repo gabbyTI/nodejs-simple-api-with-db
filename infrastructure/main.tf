@@ -18,8 +18,8 @@ module "postgres_db" {
   private_subnet_ids = module.vpc.private_subnet_ids
 
   # Database Configuration
-  database_name    = "nodejs_app"
-  db_username      = "app_user"
+  database_name = "nodejs_app"
+  db_username   = "app_user"
   # db_password    = "secure_password_123"  # Optional - if not provided, will be generated
   postgres_version = "16.4"
   instance_class   = "db.t3.micro"
@@ -30,8 +30,8 @@ module "postgres_db" {
 
 module "app_server" {
   source             = "./_modules/ec2-instance-with-static-eip"
-  subnet_id = module.vpc.public_subnet_ids[0] # Use the first public subnet for the instance
-  name_prefix       = "${var.project_name}"
+  subnet_id          = module.vpc.public_subnet_ids[0] # Use the first public subnet for the instance
+  name_prefix        = var.project_name
   security_group_ids = [aws_security_group.app.id]
   ami                = "ami-0ae6f07ad3a8ef182" # Replace with your AMI ID
   instance_type      = "t4g.micro"

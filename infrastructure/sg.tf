@@ -1,6 +1,6 @@
 resource "aws_security_group" "app" {
   name_prefix = "${var.project_name}-${var.environment}-app-sg-"
-  vpc_id = module.vpc.vpc_id
+  vpc_id      = module.vpc.vpc_id
 }
 
 resource "aws_vpc_security_group_ingress_rule" "app_http" {
