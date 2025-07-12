@@ -13,6 +13,12 @@ output "app_server_ip" {
   value       = module.app_server.public_ip
 }
 
+output "app_server_private_key" {
+  description = "Private key for the application server"
+  value       = module.app_server.ssh_private_key
+  sensitive   = true
+}
+
 output "db_endpoint" {
   description = "Database endpoint"
   value       = module.postgres_db.endpoint
