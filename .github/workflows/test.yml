@@ -1,9 +1,10 @@
-## github action node test
-# This workflow will install Node.js, run tests, and deploy if tests pass
-name: Node.js CI
+name: Node.js CI Test
 on:
   push:
     branches: [ main ]
+    paths-ignore:
+      - 'infrastructure/**'
+
   pull_request:
     branches: [ main ]
 jobs:
@@ -11,13 +12,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
     - name: Set up Node.js
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v4
       with:
-        node-version: '14'
+        node-version: '18'
+        cache: 'npm'
     - name: Install dependencies
-      run: npm install
+      run: npm ci
     - name: Run tests
       run: npm test
     # - name: Deploy if tests pass
