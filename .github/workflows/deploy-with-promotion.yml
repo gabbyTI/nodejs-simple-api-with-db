@@ -54,6 +54,7 @@ jobs:
 
       - name: Upload production artifact
         uses: actions/upload-artifact@v4
+        retention-days: 1
         with:
           name: app-artifact
           path: |
@@ -77,6 +78,15 @@ jobs:
           path: app
 
       - name: Deploy to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ vars.EC2_HOST }}
+          username: ${{ vars.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: "app/*"
+          target: "/tmp/nodejs-simpleapi-deploy"
+
+      - name: Configure and start application
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ vars.EC2_HOST }}
@@ -85,18 +95,18 @@ jobs:
           script: |
             set -e
             APP_DIR="/home/${{ vars.EC2_USERNAME }}/nodejs-simpleapi"
+            TEMP_DIR="/tmp/nodejs-simpleapi-deploy"
 
-            # Create folder if not exists
+            # Create app directory if not exists
             mkdir -p $APP_DIR
 
             # Clean old files
             rm -rf $APP_DIR/*
 
-            # Transfer files via rsync (GitHub doesn't do this natively)
-            rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./app/ ${{ vars.EC2_USERNAME }}@${{ vars.EC2_HOST }}:$APP_DIR
+            # Move files from temp location to app directory
+            mv $TEMP_DIR/app/* $APP_DIR/
+            rm -rf $TEMP_DIR
 
-            # On EC2 - create .env
-            ssh -i ~/.ssh/id_rsa ${{ vars.EC2_USERNAME }}@${{ vars.EC2_HOST }} <<EOF
             cd $APP_DIR
 
             # Create .env file
@@ -117,4 +127,3 @@ jobs:
             # Start the application with PM2
             pm2 start npm --name nodejs-simpleapi -- start
             pm2 save
-            EOF
