@@ -64,57 +64,57 @@ jobs:
             prisma/
             .env.example
 
-    deploy:
-      needs: build
-      runs-on: ubuntu-latest
-      if: github.ref == 'refs/heads/main'
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
 
-      steps:
-        - name: Download app artifact
-          uses: actions/download-artifact@v4
-          with:
-            name: app-artifact
-            path: app
+    steps:
+      - name: Download app artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app-artifact
+          path: app
 
-        - name: Deploy to EC2
-          uses: appleboy/ssh-action@v1
-          with:
-            host: ${{ vars.EC2_HOST }}
-            username: ${{ vars.EC2_USERNAME }}
-            key: ${{ secrets.EC2_SSH_KEY }}
-            script: |
-              set -e
-              APP_DIR="/home/${{ vars.EC2_USERNAME }}/nodejs-simpleapi"
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ vars.EC2_HOST }}
+          username: ${{ vars.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            set -e
+            APP_DIR="/home/${{ vars.EC2_USERNAME }}/nodejs-simpleapi"
 
-              # Create folder if not exists
-              mkdir -p $APP_DIR
+            # Create folder if not exists
+            mkdir -p $APP_DIR
 
-              # Clean old files
-              rm -rf $APP_DIR/*
+            # Clean old files
+            rm -rf $APP_DIR/*
 
-              # Transfer files via rsync (GitHub doesn't do this natively)
-              rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./app/ ${{ vars.EC2_USERNAME }}@${{ vars.EC2_HOST }}:$APP_DIR
+            # Transfer files via rsync (GitHub doesn't do this natively)
+            rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./app/ ${{ vars.EC2_USERNAME }}@${{ vars.EC2_HOST }}:$APP_DIR
 
-              # On EC2 - create .env
-              ssh -i ~/.ssh/id_rsa ${{ vars.EC2_USERNAME }}@${{ vars.EC2_HOST }} <<EOF
-              cd $APP_DIR
+            # On EC2 - create .env
+            ssh -i ~/.ssh/id_rsa ${{ vars.EC2_USERNAME }}@${{ vars.EC2_HOST }} <<EOF
+            cd $APP_DIR
 
-              # Create .env file
-              cat > .env <<EOF
-              PORT=3000
-              NODE_ENV=production
-              LOG_LEVEL=info
-              DATABASE_URL=${{ secrets.APP_DATABASE_URL }}
-              EOF
+            # Create .env file
+            cat > .env <<EOF
+            PORT=3000
+            NODE_ENV=production
+            LOG_LEVEL=info
+            DATABASE_URL=${{ secrets.APP_DATABASE_URL }}
+            EOF
 
-              # Stop and delete existing PM2 process
-              pm2 stop nodejs-api || true
-              pm2 delete nodejs-api || true
+            # Stop and delete existing PM2 process
+            pm2 stop nodejs-api || true
+            pm2 delete nodejs-api || true
 
-              # Run database migrations
-              npm run db:deploy
+            # Run database migrations
+            npm run db:deploy
 
-              # Start the application with PM2
-              pm2 start npm --name nodejs-simpleapi -- start
-              pm2 save
-              EOF
+            # Start the application with PM2
+            pm2 start npm --name nodejs-simpleapi -- start
+            pm2 save
+            EOF
