@@ -47,10 +47,7 @@ jobs:
       
       - name: Run build
         run: npm run build
-
-      - name: Prune devDependencies
-        run: npm prune --production
-
+        
       - name: Upload production artifact
         uses: actions/upload-artifact@v4
         with:
@@ -135,9 +132,7 @@ jobs:
 
             # Run database migrations
             echo "Running database migrations..."
-            # npm install -g prisma
-            # prisma migrate deploy
-            
+            npm run db:deploy
             echo "Database migrations completed"
 
             # Start the application with PM2
