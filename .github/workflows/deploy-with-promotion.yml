@@ -54,9 +54,9 @@ jobs:
 
       - name: Upload production artifact
         uses: actions/upload-artifact@v4
-        retention-days: 1
         with:
           name: app-artifact
+          retention-days: 1
           path: |
             dist/
             node_modules/
