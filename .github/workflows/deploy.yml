@@ -66,7 +66,8 @@ jobs:
             DATABASE_URL=${{ secrets.APP_DATABASE_URL }}
             EOF
 
-            pm2 restart nodejs-api || pm2 start npm --name "nodejs-simpleapi" -- run start:prod
+            pm2 delete nodejs-simpleapi || true
+            pm2 start npm --name nodejs-simpleapi -- run start:prod
             pm2 save
 
             echo "Deployed commit: $(git rev-parse HEAD)"
