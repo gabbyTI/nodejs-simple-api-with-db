@@ -25,7 +25,7 @@ output "security_group_id" {
 
 output "connection_string" {
   description = "PostgreSQL connection string"
-  value       = "postgresql://${aws_db_instance.postgres.username}:${var.db_password != null ? var.db_password : random_password.postgres_password[0].result}@${aws_db_instance.postgres.endpoint}:/${aws_db_instance.postgres.db_name}"
+  value       = "postgresql://${aws_db_instance.postgres.username}:${urlencode(var.db_password != null ? var.db_password : random_password.postgres_password[0].result)}@${aws_db_instance.postgres.endpoint}/${aws_db_instance.postgres.db_name}"
   sensitive   = true
 }
 
