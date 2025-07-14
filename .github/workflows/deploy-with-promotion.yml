@@ -130,13 +130,13 @@ jobs:
 
             # Stop and delete existing PM2 process
             echo "Stopping existing PM2 process..."
-            pm2 stop nodejs-api || true
-            pm2 delete nodejs-api || true
+            pm2 stop nodejs-simpleapi || true
+            pm2 delete nodejs-simpleapi || true
             echo "PM2 process stopped and deleted"
 
             # Run database migrations
             echo "Running database migrations..."
-            npm run db:deploy
+            npx prisma migrate deploy
             echo "Database migrations completed"
 
             # Start the application with PM2
