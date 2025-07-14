@@ -30,42 +30,42 @@ jobs:
       run: npm test
 
   deploy:
-  needs: test
-  runs-on: ubuntu-latest
-  if: github.ref == 'refs/heads/main'
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
 
-  steps:
-    - uses: actions/checkout@v4
+    steps:
+      - uses: actions/checkout@v4
 
-    - name: Deploy to EC2
-      uses: appleboy/ssh-action@v1
-      with:
-        host: ${{ vars.EC2_HOST }}
-        username: ${{ vars.EC2_USERNAME }}
-        key: ${{ secrets.EC2_SSH_KEY }}
-        script: |
-          set -e
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ vars.EC2_HOST }}
+          username: ${{ vars.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            set -e
 
-          PROJECT_DIR="/home/${{ vars.EC2_USERNAME }}/nodejs-simpleapi"
+            PROJECT_DIR="/home/${{ vars.EC2_USERNAME }}/nodejs-simpleapi"
 
-          # Clone repo if it doesn't exist
-          if [ ! -d "$PROJECT_DIR" ]; then
-            git clone https://github.com/${{ github.repository }}.git "$PROJECT_DIR"
-          fi
+            # Clone repo if it doesn't exist
+            if [ ! -d "$PROJECT_DIR" ]; then
+              git clone https://github.com/${{ github.repository }}.git "$PROJECT_DIR"
+            fi
 
-          cd "$PROJECT_DIR"
+            cd "$PROJECT_DIR"
 
-          git pull origin main
-          npm ci --production
+            git pull origin main
+            npm ci --production
 
-          cat > .env <<EOF
-          PORT=3000
-          NODE_ENV=production
-          LOG_LEVEL=info
-          DATABASE_URL=${{ secrets.APP_DATABASE_URL }}
-          EOF
+            cat > .env <<EOF
+            PORT=3000
+            NODE_ENV=production
+            LOG_LEVEL=info
+            DATABASE_URL=${{ secrets.APP_DATABASE_URL }}
+            EOF
 
-          pm2 restart nodejs-api || pm2 start npm --name "nodejs-simpleapi" -- run start:prod
-          pm2 save
+            pm2 restart nodejs-api || pm2 start npm --name "nodejs-simpleapi" -- run start:prod
+            pm2 save
 
-          echo "Deployed commit: $(git rev-parse HEAD)"
+            echo "Deployed commit: $(git rev-parse HEAD)"
