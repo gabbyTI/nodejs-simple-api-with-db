@@ -97,33 +97,52 @@ jobs:
             APP_DIR="/home/${{ vars.EC2_USERNAME }}/nodejs-simpleapi"
             TEMP_DIR="/tmp/nodejs-simpleapi-deploy"
 
+            echo "Starting deployment process..."
+            echo "APP_DIR: $APP_DIR"
+            echo "TEMP_DIR: $TEMP_DIR"
+
             # Create app directory if not exists
+            echo "Creating app directory..."
             mkdir -p $APP_DIR
 
             # Clean old files
+            echo "Cleaning old files from $APP_DIR..."
             rm -rf $APP_DIR/*
 
             # Move files from temp location to app directory
+            echo "Moving files from $TEMP_DIR to $APP_DIR..."
             mv $TEMP_DIR/app/* $APP_DIR/
             rm -rf $TEMP_DIR
+            echo "Files moved successfully"
 
             cd $APP_DIR
+            echo "Changed directory to $APP_DIR"
 
             # Create .env file
+            echo "Creating .env file..."
             cat > .env <<EOF
             PORT=3000
             NODE_ENV=production
             LOG_LEVEL=info
             DATABASE_URL=${{ secrets.APP_DATABASE_URL }}
             EOF
+            echo ".env file created"
 
             # Stop and delete existing PM2 process
+            echo "Stopping existing PM2 process..."
             pm2 stop nodejs-api || true
             pm2 delete nodejs-api || true
+            echo "PM2 process stopped and deleted"
 
             # Run database migrations
+            echo "Running database migrations..."
             npm run db:deploy
+            echo "Database migrations completed"
 
             # Start the application with PM2
+            echo "Starting application with PM2..."
             pm2 start npm --name nodejs-simpleapi -- start
             pm2 save
+            echo "Application started successfully"
+            
+            echo "Deployment completed successfully!"
