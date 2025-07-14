@@ -14,7 +14,8 @@
     "db:deploy": "prisma migrate deploy",
     "db:reset": "prisma migrate reset --force",
     "db:seed": "ts-node prisma/seed.ts",
-    "prisma:generate": "prisma generate"
+    "prisma:generate": "prisma generate",
+    "start:prod": "npm run build && node dist/index.js"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
