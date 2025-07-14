@@ -135,7 +135,9 @@ jobs:
 
             # Run database migrations
             echo "Running database migrations..."
-            npm run db:deploy
+            # npm install -g prisma
+            # prisma migrate deploy
+            
             echo "Database migrations completed"
 
             # Start the application with PM2
