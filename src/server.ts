@@ -2,6 +2,7 @@ import express from 'express';
 import { config } from 'dotenv';
 import pinoHttp from 'pino-http';
 import path from 'path';
+import cors from 'cors';
 
 // Import routes
 import { healthRouter } from './routes/health';
@@ -17,8 +18,12 @@ config();
 const app = express();
 
 // Middleware
+app.use(cors({
+  origin: process.env.FRONTEND_URL?.split(','),
+  credentials: true
+}));
 app.use(express.json());
-// app.use(pinoHttp({ logger }));
+app.use(pinoHttp({ logger }));
 
 // Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
