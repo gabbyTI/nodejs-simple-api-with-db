@@ -124,9 +124,20 @@ jobs:
             pm2 delete nodejs-simpleapi || true
             echo "PM2 process stopped and deleted"
 
+            echo "Building the application..."
+            npm run build
+
+            echo "Running migrations..."
+            npx prisma migrate deploy
+            echo "Migrations completed"
+
+            echo "Remove Dev dependencies..."
+            npm prune --production
+            echo "Dev dependencies removed"
+
             # Start the application with PM2
             echo "Starting application with PM2..."
-            pm2 start npm --name nodejs-simpleapi -- run start:prod
+            pm2 start npm --name nodejs-simpleapi -- start
             pm2 save
             echo "Application started successfully"
             
