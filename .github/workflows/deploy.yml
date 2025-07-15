@@ -2,13 +2,13 @@ name: Deploy to EC2
 
 on:
   workflow_dispatch:
-  push:
-    branches: [ main ]
-    paths-ignore:
-      - 'infrastructure/**'
-      - 'docs/**'
-      - '*.md'
-      - '.gitignore'
+  # push:
+  #   branches: [ disabled ]
+  #   paths-ignore:
+  #     - 'infrastructure/**'
+  #     - 'docs/**'
+  #     - '*.md'
+  #     - '.gitignore'
 
 jobs:
   test:

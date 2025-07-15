@@ -2,13 +2,13 @@ name: Deploy to EC2 with Promotion
 
 on:
   workflow_dispatch:
-  # push:
-  #   branches: [ disabled ]
-  #   paths-ignore:
-  #     - 'infrastructure/**'
-  #     - 'docs/**'
-  #     - '*.md'
-  #     - '.gitignore'
+  push:
+    branches: [ 'main' ]
+    paths-ignore:
+      - 'infrastructure/**'
+      - 'docs/**'
+      - '*.md'
+      - '.gitignore'
 
 jobs:
   test:
@@ -30,6 +30,7 @@ jobs:
       run: npm test
   
   build:
+    name: Build App & Artifact
     needs: test
     runs-on: ubuntu-latest
 
@@ -59,7 +60,7 @@ jobs:
             package.json
             package-lock.json
             prisma/
-            .env.example
+            public/
 
   deploy:
     needs: build
@@ -125,15 +126,13 @@ jobs:
             echo ".env file created"
 
             # Stop and delete existing PM2 process
-            echo "Stopping existing PM2 process..."
-            pm2 stop nodejs-simpleapi || true
+            echo "Deleting existing PM2 process..."
             pm2 delete nodejs-simpleapi || true
             echo "PM2 process stopped and deleted"
 
             # Run database migrations
             echo "Running database migrations..."
-            # npm install -g prisma
-            # prisma migrate deploy
+            npm run db:deploy
 
             # Start the application with PM2
             echo "Starting application with PM2..."
