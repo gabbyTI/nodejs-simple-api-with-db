@@ -30,8 +30,8 @@ jobs:
     - name: Run tests
       run: npm test
   
-  build:
-    name: Build App & Artifact
+  upload-artifact:
+    name: Upload Artifact
     needs: test
     runs-on: ubuntu-latest
 
@@ -39,33 +39,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '23'
-
-      - name: Install dependencies
-        run: npm ci
-      
-      - name: Run build
-        run: npm run build
-
       - name: Upload production artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-artifact
           retention-days: 1
           path: |
-            dist/
-            node_modules/
             package.json
             package-lock.json
             prisma/
             public/
+            src/
+            tsconfig.json
 
   deploy:
     name: Deploy to EC2
-    needs: build
+    needs: upload-artifact
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
 
@@ -117,6 +106,10 @@ jobs:
             cd $APP_DIR
             echo "Changed directory to $APP_DIR"
 
+            echo "Installing dependencies..."
+            npm ci
+            echo "Dependencies installed"
+
             # Create .env file
             echo "Creating .env file..."
             cat > .env <<EOF
@@ -127,25 +120,13 @@ jobs:
             EOF
             echo ".env file created"
 
-            # Stop and delete existing PM2 process
             echo "Deleting existing PM2 process..."
             pm2 delete nodejs-simpleapi || true
             echo "PM2 process stopped and deleted"
 
-            echo "Installing Prisma locally..."
-            npm install prisma
-
-            echo "Generating Prisma client..."
-            npm run prisma:generate
-            echo "Prisma client generated"
-
-            # Run database migrations
-            echo "Running database migrations..."
-            npm run db:deploy
-
             # Start the application with PM2
             echo "Starting application with PM2..."
-            pm2 start npm --name nodejs-simpleapi -- start
+            pm2 start npm --name nodejs-simpleapi -- run start:prod
             pm2 save
             echo "Application started successfully"
             
