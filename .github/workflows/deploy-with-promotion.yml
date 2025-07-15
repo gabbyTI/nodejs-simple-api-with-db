@@ -107,7 +107,7 @@ jobs:
             echo "Changed directory to $APP_DIR"
 
             echo "Installing dependencies..."
-            npm ci --production
+            npm ci
             echo "Dependencies installed"
 
             # Create .env file
