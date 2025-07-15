@@ -119,7 +119,7 @@ jobs:
             NODE_ENV=production
             LOG_LEVEL=info
             DATABASE_URL=${{ secrets.APP_DATABASE_URL }}
-            ALLOWED_URL_ORIGINS=${{ vars.ALLOWED_URL_ORIGINS }}
+            ALLOWED_URL_ORIGINS=${{ vars.APP_ALLOWED_URL_ORIGINS }}
             EOF
             echo ".env file created"
 
