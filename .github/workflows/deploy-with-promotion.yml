@@ -12,24 +12,30 @@ on:
 
 jobs:
   test:
-    name: Test on Node.js 23
+    name: Test on Node.js ${{ matrix.node-version }}
     runs-on: ubuntu-latest
-    
+    env:
+      FORCE_COLOR: 1
+    strategy:
+      matrix:
+        node-version: [22, 23, 24]
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup Node.js
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Set up Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
-        node-version: '23'
+        node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    
     - name: Install dependencies
-      run: npm ci
-    
+      run: |
+        echo "🔧 Installing dependencies for Node.js ${{ matrix.node-version }}"
+        npm ci
     - name: Run tests
-      run: npm test
-  
+      run: |
+        echo "🧪 Running tests on Node.js ${{ matrix.node-version }}"
+        npm test
+
   upload-artifact:
     name: Upload Artifact
     needs: test
@@ -113,6 +119,7 @@ jobs:
             NODE_ENV=production
             LOG_LEVEL=info
             DATABASE_URL=${{ secrets.APP_DATABASE_URL }}
+            ALLOWED_URL_ORIGINS=${{ vars.ALLOWED_URL_ORIGINS }}
             EOF
             echo ".env file created"
 

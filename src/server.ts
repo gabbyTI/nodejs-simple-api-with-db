@@ -19,7 +19,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: process.env.FRONTEND_URL?.split(','),
+  origin: process.env.ALLOWED_URL_ORIGINS?.split(','),
   credentials: true
 }));
 app.use(express.json());
