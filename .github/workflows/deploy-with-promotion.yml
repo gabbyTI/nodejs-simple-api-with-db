@@ -132,9 +132,15 @@ jobs:
             pm2 delete nodejs-simpleapi || true
             echo "PM2 process stopped and deleted"
 
+            echo "Installing Prisma locally..."
+            npm install prisma
+
+            echo "Generating Prisma client..."
+            npm run prisma:generate
+            echo "Prisma client generated"
+
             # Run database migrations
             echo "Running database migrations..."
-            npm install prisma
             npm run db:deploy
 
             # Start the application with PM2
