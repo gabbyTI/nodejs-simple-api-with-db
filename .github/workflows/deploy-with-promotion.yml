@@ -89,15 +89,12 @@ jobs:
             echo "APP_DIR: $APP_DIR"
             echo "TEMP_DIR: $TEMP_DIR"
 
-            # Create app directory if not exists
             echo "Creating app directory..."
             mkdir -p $APP_DIR
 
-            # Clean old files
             echo "Cleaning old files from $APP_DIR..."
             rm -rf $APP_DIR/*
 
-            # Move files from temp location to app directory
             echo "Moving files from $TEMP_DIR to $APP_DIR..."
             mv $TEMP_DIR/app/* $APP_DIR/
             rm -rf $TEMP_DIR
@@ -110,7 +107,6 @@ jobs:
             npm ci
             echo "Dependencies installed"
 
-            # Create .env file
             echo "Creating .env file..."
             cat > .env <<EOF
             PORT=3000
@@ -119,10 +115,6 @@ jobs:
             DATABASE_URL=${{ secrets.APP_DATABASE_URL }}
             EOF
             echo ".env file created"
-
-            echo "Deleting existing PM2 process..."
-            pm2 delete nodejs-simpleapi || true
-            echo "PM2 process stopped and deleted"
 
             echo "Building the application..."
             npm run build
@@ -135,10 +127,9 @@ jobs:
             npm prune --production
             echo "Dev dependencies removed"
 
-            # Start the application with PM2
-            echo "Starting application with PM2..."
-            pm2 start npm --name nodejs-simpleapi -- start
+            echo "Reloading application with zero downtime..."
+            pm2 reload nodejs-simpleapi || pm2 start npm --name nodejs-simpleapi -- start
             pm2 save
-            echo "Application started successfully"
+            echo "Application reloaded successfully"
             
             echo "Deployment completed successfully!"
