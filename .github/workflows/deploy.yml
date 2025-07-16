@@ -1,4 +1,4 @@
-name: Deploy to EC2 with Promotion
+name: Deploy to EC2 with Artifact
 
 on:
   workflow_dispatch:
