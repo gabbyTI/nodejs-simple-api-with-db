@@ -16,3 +16,9 @@ variable "project_name" {
   type        = string
   default     = "nodejs-simpleapi"
 }
+
+variable "app_port" {
+  description = "Port on which the application listens"
+  type        = number
+  default     = 3000
+}

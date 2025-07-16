@@ -51,3 +51,20 @@ module "app_server" {
     EOF
   )
 }
+
+module "alb" {
+  source                 = "./_modules/alb"
+  name_prefix = "${var.project_name}-${var.environment}"
+  vpc_id                 = module.vpc.vpc_id
+  subnet_ids             = module.vpc.public_subnet_ids
+  security_groups        = [aws_security_group.app_alb.id]
+  app_port               = var.app_port
+  redirect_http_to_https = false
+}
+
+resource "aws_lb_target_group_attachment" "tg_attachment" {
+  target_group_arn = module.alb.target_group_arn
+  target_id        = module.app_server.instance_id
+  port             = var.app_port
+  
+}
